@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>server 로그인</title>
+</head>
+<style>
+    fieldset{align-content: center}
+</style>
+<body>
+    <form action="{% url 'email_send' %}" accept-charset="utf-8" method="post">
+    {% csrf_token %}
+        <fieldset style="width: fit-content">
+            <h3 align="center"> 이메일을 입력해주세요.</h3>
+                <input type="text" name = "email_address" value="{{ email_address }}"/>
+            <input type="submit" value="메일 발송"/>
+        </fieldset>
+    </form>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Base Image
+FROM redis:latest
+
+# Port
+EXPOSE 6379
+
+# Run
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["redis-server"]

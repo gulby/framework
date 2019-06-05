@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Server Error (500)</title>
+</head>
+<body>
+{% if messages %}
+   {% for message in messages %}
+      <script>
+           alert('{{ message }}')
+       </script>
+    {% endfor %}
+{% endif %}
+<script>
+    history.back();
+</script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>server Email OTP 인증</title>
+</head>
+<style>
+    fieldset{align-content: center}
+</style>
+<body>
+    <form action="{% url 'auth_email' %}" accept-charset="utf-8" name="email_login" method="post">
+    {% csrf_token %}
+        <fieldset style="width: fit-content">
+            <h3 align="center"> 이메일 인증번호를 입력해주세요.</h3>
+                <input type="text" name = "otp" value="{{ otp }}"/>
+                <input type="hidden" name = "email_id" value="{{ email_id }}"/>
+            <input type="submit" name="send_email" value="확인"/>
+        </fieldset>
+    </form>
+</body>
+</html>

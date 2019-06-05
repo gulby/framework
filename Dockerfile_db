@@ -1,0 +1,12 @@
+# Base Image
+FROM postgres:latest
+
+# Copy init script
+ADD ./myscript/create_db.sql /docker-entrypoint-initdb.d/
+
+# Port
+EXPOSE 5432
+
+# Run
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["postgres"]

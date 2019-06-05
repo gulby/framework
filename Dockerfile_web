@@ -1,0 +1,51 @@
+FROM FROM python:3.6
+MAINTAINER gulby <gulby@jihaepat.com>
+
+RUN apt-get update && apt-get install -y build-essential nginx supervisor postgresql-client vim graphviz wkhtmltopdf
+RUN pip install setuptools pip --upgrade
+
+# Home
+WORKDIR /home/service/
+
+# Python Package
+COPY ./requirements_conda.txt /home/service/requirements_conda.txt
+RUN pip install -U -r requirements_conda.txt
+COPY ./requirements_pip.txt /home/service/requirements_pip.txt
+RUN pip install -U -r requirements_pip.txt
+
+# patch
+RUN apt-get install fonts-nanum fonts-nanum-coding fonts-nanum-extra
+COPY ./myscript/patch/wkhtmltopdf/wkhtmltoimage /usr/local/bin/
+COPY ./myscript/patch/wkhtmltopdf/wkhtmltopdf /usr/local/bin/
+
+# mkdir
+RUN mkdir temp
+
+# Service Configrations
+COPY ./etc/ /home/service/etc/
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
+RUN ln -s /home/service/etc/server.nginx /etc/nginx/sites-enabled/server.conf
+RUN rm /etc/nginx/sites-enabled/default
+COPY ./etc/supervisord.conf /etc/supervisor/conf.d/server.conf
+
+# scripts
+COPY ./docker-entrypoint.sh /home/service/
+COPY ./docker_init.py /home/service/
+COPY ./myscript/shell.sh /home/service/myscript/
+COPY ./myscript/psql.sh /home/service/myscript/
+
+# Copy App
+COPY ./manage.py            /home/service/
+COPY ./responder_server.py  /home/service/
+COPY ./cherrypy_server.py   /home/service/
+COPY ./server/              /home/service/server/
+COPY ./base/                /home/service/base/
+COPY ./common/              /home/service/common/
+COPY ./human/               /home/service/human/
+
+# Port
+EXPOSE 80
+EXPOSE 443
+
+# Run
+ENTRYPOINT ["./docker-entrypoint.sh"]
