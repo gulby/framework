@@ -8,6 +8,7 @@ else
     # origin
     git remote remove origin
     git remote add origin http://server.deephigh.net:7080/deephigh/$PROJECT/server.git
+    git push origin master
     git branch --set-upstream-to=origin/master master
 
     # framework
