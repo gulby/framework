@@ -21,4 +21,4 @@ class NormalizeTest(BaseTestCase):
 
     def test_2(self):
         with self.assertRaises(AssertionError):
-            assert refine("test\ntest\rtest") == "test test test"
+            assert refine("test\ntest\rtest")
