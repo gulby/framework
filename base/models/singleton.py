@@ -16,8 +16,8 @@ class Singleton(Model):
     uname = UnameSubfield(null=False)
 
     @classmethod
-    def get_instance(cls, *args, **kwargss):
-        instance, _ = cls.objects.get_or_create(*args, **kwargss)
+    def get_instance(cls, *args, **kwargs):
+        instance, _ = cls.objects.get_or_create(*args, **kwargs)
         return instance
 
     @set_invalid_on_exception
