@@ -23,6 +23,16 @@ def json_loads(s, **options):
     return rapidjson_loads(s, **options)
 
 
+def json_read_file(path, **options):
+    with open(path, "r") as f:
+        return json_loads(f.read(), **options)
+
+
+def json_write_file(d, path, **options):
+    with open(path, "w") as f:
+        f.write(json_dumps(d, **options))
+
+
 def json_walk(d, f):
     if isinstance(d, dict):
         for k, v in d.items():
