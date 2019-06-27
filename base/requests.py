@@ -1,5 +1,4 @@
 from base64 import b64encode, b64decode
-from hashlib import md5
 from django.conf import settings
 
 from requests import Response
@@ -7,7 +6,7 @@ from requests.sessions import Session as RequestsSession
 from requests.exceptions import RequestException
 
 from base.json import json_loads, json_dumps
-from base.utils import capture_caller_info
+from base.utils import compute_hash_hex64
 
 
 # thread-safe
@@ -25,12 +24,10 @@ class RequestsCacheManager(object):
 
     @classmethod
     def compute_key(cls, method, url, *args, **kwargs):
-        filename, co_name, lineno = capture_caller_info()
         params = {"args": args, "kwargs": kwargs}
         params_str = json_dumps(str(params))
-        m = md5()
-        m.update(params_str.encode("utf-8"))
-        s = "{}::{}::{}__{}__{}__{}".format(filename, co_name, 0, method, url, m.hexdigest())
+        params_hash = compute_hash_hex64(params_str)
+        s = "{}__{}__{}".format(method, url, params_hash)
         s = s.replace("/", ".").replace(":", ".").replace("?", ".")
         return s
 
