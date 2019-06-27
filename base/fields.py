@@ -33,6 +33,7 @@ class JsonAdapter(Json):
 
     def dumps(self, obj):
         options = {"cls": self.encoder} if self.encoder else {}
+        options["ensure_ascii"] = True
         return json_dumps(obj, **options)
 
 
