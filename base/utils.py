@@ -88,6 +88,10 @@ def compute_hash_int64(value):
     return (n ^ 0x8000000000000000) - 0x8000000000000000
 
 
+def compute_hash_hex64(value):
+    return xxh64_hexdigest(value)
+
+
 def compute_file_hash(file):
     return xxh64_hexdigest(file.read())
 

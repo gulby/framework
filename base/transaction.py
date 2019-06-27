@@ -401,7 +401,7 @@ class TransactionManager(object):
         connection = get_connection(using)
         try:
             tran_stack = connection.tran_stack
-        except:
+        except AttributeError:
             tran_stack = []
             connection.tran_stack = tran_stack
         return tran_stack[-1] if tran_stack else None
