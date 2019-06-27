@@ -16,7 +16,8 @@ JSON_LEAF_TYPES = (str, int, type(None), float)
 
 
 def json_dumps(d, **options):
-    options['ensure_ascii'] = False
+    if "ensure_ascii" not in options:
+        options["ensure_ascii"] = False
     return rapidjson_dumps(d, **options)
 
 
