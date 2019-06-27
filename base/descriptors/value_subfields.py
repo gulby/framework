@@ -33,7 +33,7 @@ class ValueSubfield(Subfield):
             assert callable(normalize), "normalize 는 function pointer 로 넣어야 합니다."
             try:
                 normalize(None) is None, "normalize 에 None 을 넘긴 결과는 None 이거나 에러가 발생해야 합니다."
-            except:
+            except Exception:
                 pass
         assert isinstance(raw_field, str) or raw_field is None
         assert isinstance(raw_value_mapping, dict) or raw_value_mapping is None

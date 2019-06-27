@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib.messages import constants
 
-from base.utils import render_exception
+from base.utils import render_exception, console_log
 from base.transaction import Transaction, ReadonlyTransaction
 from base.models import User, Actor
 
@@ -24,7 +24,8 @@ class TransactionMiddleware(object):
         try:
             user = User.objects.get(id=session[usk]) if usk in session else None
             actor = Actor.objects.get(id=session[ask]) if ask in session else None
-        except:
+        except Exception as e:
+            console_log(e)
             user = None
             actor = None
 
