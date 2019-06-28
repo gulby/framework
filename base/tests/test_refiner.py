@@ -20,5 +20,4 @@ class NormalizeTest(BaseTestCase):
         assert refine("5천만 원 대에서 위에서 말한 모든 것이 가능한 차가 있다면 믿겠는가  ?") == "5천만 원 대에서 위에서 말한 모든 것이 가능한 차가 있다면 믿겠는가?"
 
     def test_2(self):
-        with self.assertRaises(AssertionError):
-            assert refine("test\ntest\rtest")
+        assert refine("test\ntest\rtest") == "test test test"

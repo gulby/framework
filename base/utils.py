@@ -110,7 +110,7 @@ def console_log(*args, extra=None, log_to="stderr"):
         sys.stderr.write("\t")
         sys.stderr.write(str(extra))
         sys.stderr.write("\n")
-    return args[0]
+    return args[0] if args else None
 
 
 def file_log(*args, extra=None):
@@ -680,3 +680,12 @@ class DurationChecker(object):
         self.duration = (self.end_time - self.start_time).total_seconds()
         render_func = self.render_func or default_render_func
         render_func(self.duration)
+
+
+def findall(p, s):
+    i = -1
+    for j in range(1000000):
+        i = s.find(p, i + 1)
+        if i == -1:
+            break
+        yield i

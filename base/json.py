@@ -12,7 +12,7 @@ from base.utils import console_log
 JSON_CONTAINER_TYPES = (dict, MappingProxyType, list, tuple)
 JSON_MAPPING_TYPES = (dict, MappingProxyType)
 JSON_ARRAY_TYPES = (list, tuple)
-JSON_LEAF_TYPES = (str, int, type(None), float)
+JSON_LEAF_TYPES = (str, int, type(None), float, bool)
 
 
 def json_dumps(d, **options):
@@ -35,15 +35,71 @@ def json_write_file(d, path, **options):
         f.write(json_dumps(d, **options))
 
 
-def json_walk(d, f):
+def json_walk(d, f, context={}):
     if isinstance(d, dict):
         for k, v in d.items():
-            f(d, k, v)
-            json_walk(v, f)
+            f(d, k, v, context)
+            json_walk(v, f, context)
     elif isinstance(d, list):
         for i, v in enumerate(d):
-            f(d, i, v)
-            json_walk(v, f)
+            f(d, i, v, context)
+            json_walk(v, f, context)
+    return context
+
+
+def json_ensure_schema(total_d, total_schema):
+    def helper(d, schema):
+        d_type = type(d)
+        schema_type = type(schema)
+
+        # list 처리
+        if d_type == list:
+            assert schema_type in JSON_ARRAY_TYPES, schema_type
+            for element in d:
+                helper(element, schema[0])
+            return
+
+        # 형식 확인 및 안전 장치 세팅
+        assert d_type == dict, d_type
+        assert schema_type in JSON_MAPPING_TYPES, schema_type
+        if schema_type != MappingProxyType:
+            schema = MappingProxyType(schema)
+
+        # schema 에 없는 항목 처리
+        for schema_k, schema_v in schema.items():
+            if schema_k not in d:
+                schema_v_type = type(schema_v)
+                if schema_v_type in JSON_ARRAY_TYPES:
+                    d[schema_k] = []
+                elif schema_v_type in JSON_MAPPING_TYPES:
+                    d[schema_k] = {}
+                    helper(d[schema_k], schema_v)
+                else:
+                    assert schema_v_type in JSON_LEAF_TYPES, schema_v_type
+                    d[schema_k] = schema_v
+
+        # schema 에 있는 항목 처리
+        for k, v in d.items():
+            if k in schema:
+                v_type = type(v)
+                if v_type in JSON_CONTAINER_TYPES:
+                    helper(v, schema[k])
+                else:
+                    assert v_type in JSON_LEAF_TYPES, v_type
+                    schema_v = schema[k]
+                    schema_v_type = type(schema_v)
+                    assert schema_v_type in JSON_LEAF_TYPES, schema_v_type
+                    if v is not None and schema_v is not None:
+                        if not isinstance(v, type(schema_v)):
+                            if v_type == int and schema_v_type in (float, str):
+                                d[k] = schema_v_type(v)
+                            elif v_type == float and schema_v_type in (str,):
+                                d[k] = schema_v_type(v)
+                            else:
+                                assert False, "k:v == ({}, {})\nschema = {}".format(k, v, schema)
+
+    # recursive call
+    helper(total_d, total_schema)
 
 
 def json_schema(d):

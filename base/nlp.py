@@ -13,8 +13,7 @@ REFINE_REGEX = [
     (r"’", r"'"),
     (r"‘", r"'"),
     (r"∼", r"~"),
-    (r"냉.온", r"냉온"),
-    (r"\? ", r" "),
+    (r" \? ", r" "),
     (r"\s+\?$", r"?"),
     (r"([가-힣]),([가-힣])", r"\1, \2"),
     (r"▁", r"_"),
@@ -23,8 +22,8 @@ REFINE_REGEX = [
 
 
 def refine(line):
-    line = line.strip()
-    assert "\n" not in line and "\r" not in line
+    # 줄바꿈 제거
+    line = line.strip().replace("\n", " ").replace("\r", " ")
     # unicode NFKC normalization
     line = normalize("NFKC", line)
     # HTML unescape : '&gt;' --> '<', ...
