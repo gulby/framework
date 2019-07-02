@@ -16,8 +16,16 @@ class NormalizeTest(BaseTestCase):
         )
         # 연속된 공백을 ' '하나의 공백으로, 앞뒤 공백 제거
         assert refine("또한  범퍼에 날개를 연상시키는 디자인을 넣은 것도 특징이다. ") == "또한 범퍼에 날개를 연상시키는 디자인을 넣은 것도 특징이다."
+
         # 문장 끝의 '?' 는 앞에 공백이 있다면 제거
         assert refine("5천만 원 대에서 위에서 말한 모든 것이 가능한 차가 있다면 믿겠는가  ?") == "5천만 원 대에서 위에서 말한 모든 것이 가능한 차가 있다면 믿겠는가?"
+
+        # &; 시리즈
+        assert refine("데얼&apos;") == "데얼'"
+        assert refine("데얼&lt;") == "데얼<"
+        assert refine("데얼&gt;") == "데얼>"
+        assert refine("데얼&amp;") == "데얼&"
+        assert refine("데얼&quot;") == '데얼"'
 
     def test_2(self):
         assert refine("test\ntest\rtest") == "test test test"
