@@ -1,5 +1,6 @@
 import re
 from unicodedata import normalize
+from MeCab import Tagger
 
 from base.utils import html_unescape
 
@@ -33,3 +34,40 @@ def refine(line):
     # 최종 공백 제거
     line = line.strip()
     return line
+
+
+# KoNLPy 와 호환되도록 만들어 놓은 것임
+class Mecab(object):
+    tagger = Tagger()
+
+    def morphs(self, phrase):
+        return [s for s, t in self.pos(phrase)]
+
+    def extract_ngram_corpus(self, phrase):
+        tagged = self.pos(phrase)
+        return [s for s, t in tagged if not t.startswith("S")]
+
+    def nouns(self, phrase):
+        tagged = self.pos(phrase)
+        return [s for s, t in tagged if t[:1] in ("N",) or t[:2] in ("XR", "SL", "SH")]
+
+    def nouns_and_verbs(self, phrase):
+        tagged = self.pos(phrase)
+        return [s for s, t in tagged if t[:1] in ("N", "V") or t[:2] in ("XR", "SL", "SH")]
+
+    def without_josa(self, phrase):
+        tagged = self.pos(phrase)
+        return [s for s, t in tagged if not t.startswith("J")]
+
+    def pos(self, phrase):
+        return self.parse(self.tagger.parse(phrase))
+
+    @classmethod
+    def parse(cls, result):
+        def split(elem):
+            if not elem:
+                return ("", "SY")
+            s, t = elem.split("\t")
+            return (s, t.split(",", 1)[0])
+
+        return [split(elem) for elem in result.splitlines()[:-1]]

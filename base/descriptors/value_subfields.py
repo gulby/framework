@@ -256,7 +256,7 @@ class DictSubfield(ValueSubfield):
         return DictSubfieldHelper(result, setter, self.subfield_type)
 
     def __set__(self, instance, patch):
-        def encoder(d, k, v, context):
+        def encoder(d, k, v, storage):
             patch[k] = json_encode(v)
 
         instance.assert_changeable(self.field_name)

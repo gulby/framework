@@ -35,16 +35,16 @@ def json_write_file(d, path, **options):
         f.write(json_dumps(d, **options))
 
 
-def json_walk(d, f, context={}):
+def json_walk(d, f, storage={}):
     if isinstance(d, dict):
         for k, v in d.items():
-            f(d, k, v, context)
-            json_walk(v, f, context)
+            f(d, k, v, storage)
+            json_walk(v, f, storage)
     elif isinstance(d, list):
         for i, v in enumerate(d):
-            f(d, i, v, context)
-            json_walk(v, f, context)
-    return context
+            f(d, i, v, storage)
+            json_walk(v, f, storage)
+    return storage
 
 
 def json_ensure_schema(total_d, total_schema):
