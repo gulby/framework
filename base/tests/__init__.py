@@ -1,3 +1,5 @@
+import os
+import shutil
 from unittest.case import skip, _id, _Outcome
 from types import MappingProxyType
 
@@ -31,6 +33,14 @@ def get_uploaded_file(file_path):
     file = DjangoFile(f)
     uploaded_file = InMemoryUploadedFile(file, None, file_path, "text/plain", file.size, None, None)
     return uploaded_file
+
+
+# TODO: 제대로 다시구현(테스트 진행중에 다른 테스트에서 폴더를 초기화시키면 에러발생함, 현재 미사용중)
+def clear_media_folder():
+    if os.path.exists("media"):
+        shutil.rmtree("media")
+    else:
+        os.mkdir("media")
 
 
 class AbstractTestCase(DjangoTestCase):
