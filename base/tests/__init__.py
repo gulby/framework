@@ -39,8 +39,6 @@ def get_uploaded_file(file_path):
 def clear_media_folder():
     if os.path.exists("media"):
         shutil.rmtree("media")
-    else:
-        os.mkdir("media")
 
 
 class AbstractTestCase(DjangoTestCase):
