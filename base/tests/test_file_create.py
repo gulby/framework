@@ -6,30 +6,22 @@ from base.utils import compute_file_hash
 
 
 class FileCreateTest(BaseTestCase):
-    # TODO: multi-thread 환경에서도 문제없이 통과하도록 수정
-    @todo_test()
     def test_1(self):
         file = self.get_uploaded_file(file_path="base/apps.py")
         file_ins = File(file=file)
         assert os.path.isfile(os.path.join("media", file_ins.file_path))
 
-    # TODO: multi-thread 환경에서도 문제없이 통과하도록 수정
-    @todo_test()
     def test_2(self):
         file = self.get_uploaded_file(file_path="base/apps.py")
         file_ins = File.objects.create(file=file)
         assert os.path.isfile(os.path.join("media", file_ins.file_path))
 
-    # TODO: multi-thread 환경에서도 문제없이 통과하도록 수정
-    @todo_test()
     def test_3(self):
         file = self.get_uploaded_file(file_path="base/apps.py")
         file_ins = File()
         file_ins.file = file
         assert os.path.isfile(os.path.join("media", file_ins.file_path))
 
-    # TODO: multi-thread 환경에서도 문제없이 통과하도록 수정
-    @todo_test()
     def test_difference_file_create(self):
         file = self.get_uploaded_file(file_path="base/apps.py")
         file_ins = File.objects.create(file=file)
