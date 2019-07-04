@@ -124,16 +124,13 @@ class Blob(Model):
         self.name = name = v.name
         self.ext = name.split(".")[-1] if "." in name else ""
         self.size = v.size
+        # 단위 테스트에서는 DB 가 리셋되기 때문에 같은 hash 의 파일이 계속 write 시도될 수가 있음. 이를 회피
+        if settings.IS_UNIT_TEST and default_storage.exists(self.file_path):
+            return
+        default_storage.save(self.file_path, self.file)
 
     @cached_property
     def file_path(self):
         file_hash = self.uname
         assert file_hash
         return "{}/{}/{}".format(file_hash[0:2], file_hash[2:4], file_hash)
-
-    def on_syncdb_insert(self):
-        # 단위 테스트에서는 DB 가 리셋되기 때문에 같은 hash 의 파일이 계속 write 시도될 수가 있음. 이를 회피
-        if settings.IS_UNIT_TEST and default_storage.exists(self.file_path):
-            return
-        # DB 에 insert 가 끝난 후 File 을 생성. 에러 발생 시 DB 는 롤백이 되므로
-        default_storage.save(self.file_path, self.file)
