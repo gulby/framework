@@ -1,7 +1,55 @@
 from base.tests import BaseTestCase
-from base.json import json_schema, json_ensure_schema
+from base.json import json_schema, json_ensure_schema, json_walk2, json_get_by_keys
 from base.models.samples import Dummy
 from datetime import datetime
+
+
+class JsonWalk2Test(BaseTestCase):
+    def test(self):
+        def f(d, k, v, storage, root, keys):
+            v2 = root
+            for k2 in keys:
+                v2 = v2[k2]
+            assert v == v2
+            if len(keys) == 2:
+                storage["cnt"] += 1 if int(v) == 1 else 0
+
+        storage = {"cnt": 0}
+        sample_data = {
+            "39ce59fb0c874a62": {"31739": 1.0, "95217": 1.0, "126956": 1.0, "63478": 1.0},
+            "974a9774814cc2e2": {"31739": 1.0, "95217": 1.0, "126956": 1.0, "63478": 1.0},
+            "5723e1e4d8978c31": {"31739": True, "95217": True, "126956": True, "63478": True},
+            "0216fa251aa9f72f": {"31739": 0.5, "95217": 0.5, "126956": 0, "63478": 0.5},
+            "c047d4e5adaf8a2f": {"31739": 0, "95217": 1.0, "126956": 0, "63478": 0},
+        }
+        json_walk2(sample_data, f, storage)
+        assert storage["cnt"] == 13
+
+
+class JsonGetByKeys(BaseTestCase):
+    def test(self):
+        sample_data = {
+            "version": "",
+            "data": [
+                {
+                    "title": "",
+                    "paragraphs": [
+                        {
+                            "context": "지문",
+                            "qas": [
+                                {
+                                    "id": "",
+                                    "question": "",
+                                    "answers": [{"text": "", "answer_start": 0, "answer_end": 0}],
+                                    "is_impossible": 0,
+                                }
+                            ],
+                        }
+                    ],
+                }
+            ],
+        }
+        assert json_get_by_keys(sample_data, "data", 0, "paragraphs", 0, "context") == "지문"
 
 
 class JsonSchemaTest(BaseTestCase):

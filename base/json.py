@@ -47,6 +47,30 @@ def json_walk(d, f, storage={}):
     return storage
 
 
+def json_walk2(root, f, storage={}):
+    def helper(d, f, storage, keys):
+        if isinstance(d, dict):
+            for k, v in d.items():
+                child_keys = keys + [k]
+                f(d, k, v, storage, root, child_keys)
+                helper(v, f, storage, child_keys)
+        elif isinstance(d, list):
+            for i, v in enumerate(d):
+                child_keys = keys + [i]
+                f(d, i, v, storage, root, child_keys)
+                helper(v, f, storage, child_keys)
+        return storage
+
+    return helper(root, f, storage, [])
+
+
+def json_get_by_keys(d, *args):
+    result = d
+    for key in args:
+        result = result[key]
+    return result
+
+
 def json_ensure_schema(total_d, total_schema):
     def helper(d, schema):
         d_type = type(d)
