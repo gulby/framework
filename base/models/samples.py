@@ -44,7 +44,7 @@ class Dummy(Model):
     result_labels = DictSubfield(
         "data", {"STA_y": str, "STA_prob": float, "STA2_y": str, "STA2_prob": float, "TTS_y": str, "TTS_prob": float}
     )
-    default_list_test = ListSubfield("data", [int], default=[1, 2, 3, 4, 5])
+    default_list_test = ListSubfield("data", [int], default=(1, 2, 3, 4, 5))
 
     # computed subfields
     patent_summary = DictSubfield("computed", {"len": int, "summary": str})
