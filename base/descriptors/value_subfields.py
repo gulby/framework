@@ -331,10 +331,12 @@ class ListSubfield(ValueSubfield):
     def __init__(self, field_name, subfield_type, unique=False, default=None, check=None, filter=None, alias=None):
         if check is not None:
             raise NotImplementedError
-        assert default in (None, ())
+        if default:
+            assert type(default) is list
+            assert all([isinstance(v, subfield_type[0]) for v in default])
         assert type(subfield_type) is list and len(subfield_type) == 1
         subfield_type = tuple(subfield_type)
-        super().__init__(field_name, subfield_type, unique, (), check, filter, alias=alias)
+        super().__init__(field_name, subfield_type, unique, default, check, filter, alias=alias)
 
     def check_schema(self, value):
         if type(value) not in (list, tuple):
@@ -382,7 +384,6 @@ def list_subfield_setter(func):
         result = func(*args, **kwargs)
         self._notifier(old, self._d)
         return result
-
     return wrapper
 
 
