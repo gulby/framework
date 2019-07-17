@@ -12,13 +12,13 @@ cd server/
 # 모듈 설치
 myscript/deploy_packages.sh
 
+# security repo 설치
+cd server
+git clone http://server.deephigh.net:7080/deephigh/security.git
+cd ..
+
 # DB 구성
-if [[ "$OSTYPE" == "darwin"* ]];
-then
-    psql -d postgres -a -f myscript/create_db.sql
-else
-    sudo -u postgres psql -a -f myscript/create_db.sql
-fi
+myscript/create_db.sh
 
 # settings_machine 설치
 cp server/settings_machine_template.py server/settings_machine.py
