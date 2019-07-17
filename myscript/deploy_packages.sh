@@ -11,4 +11,10 @@ pip install -U -r requirements_conda.txt
 # pip 설치
 pip install -U -r requirements_pip.txt
 
+# python 단 설치
 python myscript/deploy_packages.py
+
+# mecab 설치
+cd myscript/thirdparty
+./install_mecab.sh
+cd ../..
