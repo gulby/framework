@@ -6,6 +6,43 @@ from base.models.samples import Dummy, DummyActor
 from base.models.actor import User
 from base.transaction import Transaction, TransactionManager, ReadonlyTransaction, TryTransaction, UnitTestTransaction
 from base.fields import ForceChanger
+from base.enums import Status
+
+
+class ReadOnlyTransactionTest(BaseNoTransactionTestCase):
+    def test(self):
+        with Transaction():
+            Dummy.objects.create()
+            Dummy.objects.create()
+        assert Dummy.objects.count() == 2
+
+        with ReadonlyTransaction():
+            instance1 = Dummy.objects.first("-id")
+            instance2 = Dummy.objects.first("-id")
+            assert id(instance1) == id(instance2)
+        assert Dummy.objects.count() == 2
+
+        with ReadonlyTransaction():
+            dummy = Dummy()
+            assert dummy.status == Status.NO_SYNC
+            dummy.temp = 1
+            assert dummy.status == Status.NO_SYNC
+        assert dummy.status == Status.NO_SYNC
+        assert Dummy.objects.count() == 2
+
+        with ReadonlyTransaction():
+            dummy = Dummy()
+            with self.assertRaises(AssertionError):
+                dummy.save()
+
+    def test2(self):
+        with Transaction():
+            Dummy.objects.create()
+
+        with ReadonlyTransaction():
+            dummy = Dummy.objects.first("-id")
+            with self.assertRaises(AssertionError):
+                dummy.temp = 1
 
 
 class TransactionTest(BaseNoTransactionTestCase):
@@ -150,20 +187,6 @@ class TransactionTest(BaseNoTransactionTestCase):
             assert instance3.computed["uri"] == "/uri/1/"
             instance3.delete()
         assert instance3.last_transaction > old_last_transaction
-
-    def test_readonly_transaction(self):
-        with Transaction():
-            Dummy.objects.create()
-            Dummy.objects.create()
-
-        with ReadonlyTransaction():
-            instance1 = Dummy.objects.first("-id")
-            instance2 = Dummy.objects.first("-id")
-            assert id(instance1) == id(instance2)
-
-        with self.assertRaises(AssertionError):
-            with ReadonlyTransaction():
-                Dummy.objects.create()
 
     def test_nested_transaction(self):
         with Transaction():

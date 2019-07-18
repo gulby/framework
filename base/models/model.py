@@ -82,9 +82,9 @@ class Model(AbstractModel, metaclass=ModelBase):
     optimistic_lock_count = IntegerField(null=False)
 
     # json field
-    data = JSONField(null=False)
-    computed = JSONField(null=False)
-    raw = JSONField(null=True)
+    data = JSONField(null=False, blank=True)
+    computed = JSONField(null=False, blank=True)
+    raw = JSONField(null=True, blank=True)
 
     # data subfields
     created_date = ValueSubfield("data", datetime)
@@ -313,7 +313,7 @@ class Model(AbstractModel, metaclass=ModelBase):
     def patch_json_field(self):
         if self.status == Status.DELETED:
             return
-        assert self.status in (Status.NORMAL, Status.WORKING)
+        assert self.status in (Status.NORMAL, Status.WORKING), self.status
         total_default = self.subfield_defaults
         _schema_changed = False
         old_status = self.__dict__["status"]
@@ -527,7 +527,7 @@ class Model(AbstractModel, metaclass=ModelBase):
         if subfield_name not in _mjson_revert_patch[field_name]:
             _mjson_revert_patch[field_name][subfield_name] = json_encode(old)
         with ForceChanger(self):
-            if old_status is not Status.NEW:
+            if old_status not in (Status.NEW, Status.NO_SYNC):
                 self.status = Status.DIRTY
             self._process_dependent_computed(subfield_name)
             # original
