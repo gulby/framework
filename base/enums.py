@@ -11,6 +11,7 @@ class Expire(IntEnum):
 
 @unique
 class Status(IntEnum):
+    NO_SYNC = -2  # DB 저장 없이 메모리 상에서만 사용하는 상태. 장고 어드민 등 기존 장고와의 호환성을 위해 도입
     INVALID = -1  # refresh 가 필요함. 롤백된 경우 등
     DELETED = 0  # 삭제됨
     CREATING = 1  # 생성 중
@@ -43,5 +44,6 @@ STATUS_GRAPH = MappingProxyType(
         Status.WORKING: (Status.DIRTY, Status.DELETED, Status.NORMAL),
         Status.DELETED: (),
         Status.INVALID: (),
+        Status.NO_SYNC: (),
     }
 )
