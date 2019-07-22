@@ -3,7 +3,8 @@
 # prerequisite 설치 : 장비당 한번만 실행하면 됨
 # myscript/deploy_prerequisite.sh
 
-# framework 작업용 브랜치 생성
+# framework 작업용 브랜치 및 remote 생성
+git remote add framework http://server.deephigh.net:7080/deephigh/framework/server.git
 git checkout framework_server
 git checkout master
 
