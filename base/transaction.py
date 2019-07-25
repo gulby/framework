@@ -90,7 +90,7 @@ class Transaction(DjangoAtomic):
         self.key_gen = None
         self.id = None
         self._checkin_actor = checkin_actor
-        self._login_user = login_user if login_user else checkin_actor.user if checkin_actor else None
+        self._login_user = login_user if login_user else None
         # storage
         self.instances = {}
         self.uri_mapping = {}
@@ -138,37 +138,47 @@ class Transaction(DjangoAtomic):
     def checkin_actor(self):
         return self._checkin_actor
 
+    @checkin_actor.setter
+    def checkin_actor(self, v):
+        self._checkin_actor = v
+
     @property
     def login_user(self):
+        if not self._login_user:
+            self._login_user = self.checkin_actor.user if self.checkin_actor else None
         return self._login_user
 
+    @login_user.setter
+    def login_user(self, v):
+        self._login_user = v
+
     def checkin(self, actor):
-        already_login_user, already_checkin_actor = (self._login_user, self._checkin_actor)
+        already_login_user, already_checkin_actor = (self.login_user, self.checkin_actor)
         if already_checkin_actor == actor:
             return
         assert already_checkin_actor is None
         assert actor and actor.my_type.is_subtype_of(Type.Actor)
         if not already_login_user and actor.user:
             self.login(actor.user)
-        self._checkin_actor = actor
+        self.checkin_actor = actor
         for instance in [instance for instance in self.instances.values() if instance.status == Status.NEW]:
             assert instance.creator is None
             instance.creator = actor
 
     def checkout(self):
-        self._checkin_actor = None
+        self.checkin_actor = None
 
     def login(self, user):
-        already_login_user = self._login_user
+        already_login_user = self.login_user
         if already_login_user == user:
             return
         assert already_login_user is None
         assert user and user.my_type.is_subtype_of(Type.User)
-        self._login_user = user
+        self.login_user = user
 
     def logout(self):
-        self._login_user = None
-        if self._checkin_actor:
+        self.login_user = None
+        if self.checkin_actor:
             self.checkout()
 
     def get(self, id=None, uri=None):
@@ -254,10 +264,10 @@ class Transaction(DjangoAtomic):
             tran_stack.append(self)
             self.key_gen = outermost_transaction.key_gen
             self.id = outermost_transaction.id
-            if not self._checkin_actor:
-                self._checkin_actor = parent.checkin_actor
-            if not self._login_user:
-                self._login_user = parent._login_user
+            if not self.checkin_actor:
+                self.checkin_actor = parent.checkin_actor
+            if not self.login_user:
+                self.login_user = parent.login_user
             self.connect_storage(outermost_transaction)
 
     def __enter__(self):

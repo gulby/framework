@@ -44,6 +44,7 @@ else
     find . | grep .sh$ | xargs -i sed -e "s/server_web/"$PROJECT"_web/g" -i {}
     find . | grep .sh$ | xargs -i sed -e "s/server_cache/"$PROJECT"_cache/g" -i {}
     find . | grep .sh$ | xargs -i sed -e "s/server_staging_db/"$PROJECT"_staging_db/g" -i {}
+    find . | grep .sh$ | xargs -i sed -e "s/framework_server/framework_"$PROJECT"/g" -i {}
 
     git checkout -- myscript/_init_repository.sh
 fi

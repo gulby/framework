@@ -45,7 +45,11 @@ class AbstractModel(DjangoModel):
         if is_create:
             self.register_on_transaction()
             self._init_subfields(**subfield_kwargs)
-            self.__dict__["status"] = Status.NEW
+            tran = TransactionManager.get_transaction()
+            if tran and tran.is_readonly:
+                self.__dict__["status"] = Status.NO_SYNC
+            else:
+                self.__dict__["status"] = Status.NEW
             self.on_create()
 
     def init_variables(self):
@@ -205,7 +209,8 @@ class AbstractModel(DjangoModel):
         assert self.status, "DELETED 상태여서 수정할 수 없습니다."
         tran = TransactionManager.get_transaction()
         assert tran, "Transaction 내부가 아니어서 수정할 수 없습니다."
-        assert tran.is_readonly is False, "ReadonlyTransaction 에서는 수정할 수 없습니다."
+        if self.status != Status.NO_SYNC:
+            assert tran.is_readonly is False, "ReadonlyTransaction 에서는 수정할 수 없습니다."
 
     @classmethod
     def from_db_impl(cls, db, field_names, values):
@@ -243,6 +248,7 @@ class AbstractModel(DjangoModel):
 
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         # check
+        assert self.status != Status.NO_SYNC
         assert not using or using == "default", "using 은 지원하지 않습니다."
         assert update_fields is None, "update_fields 는 지원하지 않습니다."
         assert self.is_in_writable_transaction(), "해당 instance 가 수정 가능한 Transaction 내에 없습니다."
