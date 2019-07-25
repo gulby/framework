@@ -66,7 +66,11 @@ def json_walk2(root, f, storage={}):
 
 def json_get_by_keys(d, *args):
     result = d
-    for key in args:
+    if len(args) == 1 and type(args[0]) in JSON_ARRAY_TYPES:
+        keys = args[0]
+    else:
+        keys = args
+    for key in keys:
         result = result[key]
     return result
 
