@@ -1,6 +1,5 @@
 import re
 from unicodedata import normalize
-from MeCab import Tagger
 
 try:
     from MeCab import Tagger
