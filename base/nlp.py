@@ -2,6 +2,15 @@ import re
 from unicodedata import normalize
 from MeCab import Tagger
 
+try:
+    from MeCab import Tagger
+except ImportError:
+
+    class Tagger(object):
+        def parse(self, phrase):
+            raise NotImplementedError
+
+
 from base.utils import html_unescape
 
 # from nlp.refiner import REFINE_REGEX
