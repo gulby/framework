@@ -11,6 +11,7 @@ class Type(TypeBase):
     Blob = AUTO
     Board = AUTO
     Countable = AUTO
+    Country = AUTO
     Dummy = AUTO
     DummyActor = AUTO
     DummyContainer = AUTO
