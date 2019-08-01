@@ -8,6 +8,7 @@ from base.types import Type
 from base.utils import is_same_file
 
 
+# TODO : base/types.py --> server/types.py 로 이동
 class AutoGenerateTypesFileTest(BaseTestCase):
     def test(self):
         with open("./generated/types.py", "w") as f:

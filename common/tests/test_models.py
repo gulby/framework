@@ -1,6 +1,12 @@
 from base.tests import BaseTestCase, ProxyModelTestMixin
-from common.models import Address, TaxOffice, LocalTaxGovernment, Board, Post
+from common.models import Address, TaxOffice, LocalTaxGovernment, Board, Post, Country
 from common.logics import InitializeTaxOffice
+
+
+class CountryTest(ProxyModelTestMixin, BaseTestCase):
+    @classmethod
+    def get_proxy_model_class(cls):
+        return Country
 
 
 class AddressTest(ProxyModelTestMixin, BaseTestCase):
