@@ -18,6 +18,13 @@ from base.utils import file_log
 from common.utils import normalize_address
 
 
+class Country(Model):
+    class Meta:
+        proxy = True
+
+    uname = UnameSubfield(create_only=True, alias="국가명")
+
+
 class TaxOffice(Actor):
     class Meta:
         proxy = True
