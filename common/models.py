@@ -23,6 +23,7 @@ class Country(Model):
         proxy = True
 
     uname = UnameSubfield(create_only=True, alias="국가명")
+    code = ValueSubfield("data", str, alias="국가코드")
 
 
 class TaxOffice(Actor):
