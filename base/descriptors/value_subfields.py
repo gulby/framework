@@ -427,6 +427,9 @@ class ListSubfieldHelper(object):
     def extend(self, patch):
         self._d.extend(patch)
 
+    def index(self, v):
+        return self._d.index(v)
+
     def __eq__(self, other):
         if type(other) in (list, tuple):
             return self._d == other
