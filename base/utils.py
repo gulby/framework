@@ -320,7 +320,12 @@ class WriterContext(object):
 
     def __enter__(self):
         if self.path:
-            self.f = open(self.path, "w")
+            try:
+                self.f = open(self.path, "w")
+            except FileNotFoundError:
+                dir = os.path.dirname(self.path)
+                os.makedirs(dir, exist_ok=True)
+                self.f = open(self.path, "w")
             return self.f
         else:
             return sys.stdout
