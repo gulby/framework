@@ -392,6 +392,24 @@ class ReaderContext(object):
             self.f.close()
 
 
+def read_file(path):
+    with ReaderContext(path) as f:
+        result = f.read()
+    return result
+
+
+def write_file(path, text):
+    if isinstance(text, list) or isinstance(text, tuple):
+        with WriterContext(path) as f:
+            for line in text:
+                f.write(line)
+                f.write("\n")
+    else:
+        assert isinstance(text, str)
+        with WriterContext(path) as f:
+            f.write(text)
+
+
 class ArgumentParser(PythonArgumentParser):
     def __init__(self, **kwargs):
         super().__init__()
