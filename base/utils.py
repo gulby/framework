@@ -20,6 +20,7 @@ from glob2 import glob as glob2_glob
 from math import log, e as 밑
 from pysnooper import snoop as pysnooper_snoop
 
+from django.utils import timezone
 from django.conf import settings
 from django.db import transaction, connection
 from django.db.utils import ProgrammingError
@@ -712,3 +713,11 @@ def findall(p, s):
         if i == -1:
             break
         yield i
+
+
+def convert_localtime(dt):
+    if not dt:
+        return None
+    if not timezone.is_aware(dt):
+        dt = timezone.make_aware(dt)
+    return timezone.localtime(dt)
