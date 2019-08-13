@@ -4,7 +4,7 @@
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y lm-sensors net-tools openssh-server
-sudo apt install -y vim screen parallel curl wget	# 맥에서도 brew 로 설치 가능
+sudo apt install -y vim screen parallel curl wget	g++ # 맥에서도 brew 로 설치 가능
 # 바뀐 커널 적용을 안정적으로 하여 nvidia 그래픽 카드 설치 시 문제가 없도록 리부팅 권장
 sudo reboot
 
