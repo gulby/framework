@@ -321,7 +321,12 @@ class WriterContext(object):
 
     def __enter__(self):
         if self.path:
-            self.f = open(self.path, "w")
+            try:
+                self.f = open(self.path, "w")
+            except FileNotFoundError:
+                dir = os.path.dirname(self.path)
+                os.makedirs(dir, exist_ok=True)
+                self.f = open(self.path, "w")
             return self.f
         else:
             return sys.stdout
@@ -386,6 +391,24 @@ class ReaderContext(object):
     def __exit__(self, exc_type, exc_val, exc_tb):
         if self.f:
             self.f.close()
+
+
+def read_file(path):
+    with ReaderContext(path) as f:
+        result = f.read()
+    return result
+
+
+def write_file(path, text):
+    if isinstance(text, list) or isinstance(text, tuple):
+        with WriterContext(path) as f:
+            for line in text:
+                f.write(line)
+                f.write("\n")
+    else:
+        assert isinstance(text, str)
+        with WriterContext(path) as f:
+            f.write(text)
 
 
 class ArgumentParser(PythonArgumentParser):
