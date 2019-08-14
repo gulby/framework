@@ -261,6 +261,7 @@ class DictSubfield(ValueSubfield):
 
         instance.assert_changeable(self.field_name)
         cls, field_name, subfield_name = (instance.__class__, self.field_name, self.subfield_name)
+        patch = json_decode(patch, dict)
         assert self.check_schema(patch)
         d = getattr(instance, field_name)[subfield_name]
         assert id(d) != id(patch)
@@ -365,12 +366,13 @@ class ListSubfield(ValueSubfield):
 
     def __set__(self, instance, patch):
         instance.assert_changeable(self.field_name)
+        patch = json_decode(patch, list)
+        patch = [json_encode(e) for e in patch]
         assert self.check_schema(patch)
         d = super().__get__(instance, instance.__class__)
         old = d[:]
         # address 가 바뀌면 안되기 때문에 성능을 약간 희생해서라도 이렇게 구현
         d.clear()
-        patch = [json_encode(e) for e in patch]
         d.extend(patch)
         if old != d:
             instance.onchange_subfield(self.field_name, self.subfield_name, old, d)

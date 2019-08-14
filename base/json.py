@@ -239,7 +239,7 @@ def json_decode(value, value_type):
     if value is not None:
         t = type(value)
         # TODO: t is not value_type -> not issubclass(t, value_type) 으로 변경
-        if t not in (dict, MappingProxyType, list, tuple) and t is not value_type:
+        if t not in JSON_CONTAINER_TYPES and t is not value_type:
             if value_type is datetime:
                 assert isinstance(value, str)
                 # TODO : 제대로 구현
@@ -250,6 +250,9 @@ def json_decode(value, value_type):
                 assert decoded
             elif hasattr(value_type, "json_decode"):
                 decoded = value_type.json_decode(value)
+            elif value_type in JSON_CONTAINER_TYPES:
+                assert t is str
+                decoded = json_loads(value)
             else:
                 decoded = value_type(value)
     return decoded
