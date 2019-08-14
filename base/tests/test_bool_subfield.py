@@ -1,4 +1,4 @@
-from base.tests import BaseNoTransactionTestCase
+from base.tests import BaseNoTransactionTestCase, BaseTestCase
 from base.models import Dummy
 from base.transaction import Transaction
 
@@ -30,3 +30,14 @@ class BoolSubfieldTest(BaseNoTransactionTestCase):
             assert Dummy.objects.filter(bool_test=0).count() == 1
             assert Dummy.objects.filter(bool_test=True).count() == 0
             assert Dummy.objects.filter(bool_test=1).count() == 0
+
+
+class BoolSubfieldTest2(BaseTestCase):
+    def test(self):
+        instance = Dummy.objects.create()
+        instance.bool_test2 = "False"
+        instance.save()
+        assert instance.bool_test2 is False
+
+        instance.bool_test2 = True
+        assert instance.bool_test2 is True

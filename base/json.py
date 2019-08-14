@@ -7,7 +7,7 @@ from rapidjson import dumps as rapidjson_dumps, loads as rapidjson_loads
 from django.utils import dateparse
 from xmltodict import _DictSAXHandler, expat, _unicode
 
-from base.utils import console_log
+from base.utils import console_log, convert_bool
 
 JSON_CONTAINER_TYPES = (dict, MappingProxyType, list, tuple)
 JSON_MAPPING_TYPES = (dict, MappingProxyType)
@@ -250,6 +250,8 @@ def json_decode(value, value_type):
                 assert decoded
             elif hasattr(value_type, "json_decode"):
                 decoded = value_type.json_decode(value)
+            elif value_type is bool:
+                decoded = convert_bool(value)
             elif value_type in JSON_CONTAINER_TYPES:
                 assert t is str
                 decoded = json_loads(value)

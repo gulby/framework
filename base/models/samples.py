@@ -38,6 +38,7 @@ class Dummy(Model):
     check_test2 = ValueSubfield("data", int, default=10, check=lambda v: v >= 2)
     wrapper_test1 = ValueSubfield("data", int, alias="wrapper_test2")
     bool_test = ValueSubfield("data", bool, normalize=convert_bool)
+    bool_test2 = ValueSubfield("data", bool)
     create_only_test = ValueSubfield("data", int, create_only=True)
     alias_test1 = ValueSubfield("data", str, alias="wrapper_alias")
     alias_test2 = ValueSubfield("data", str, alias="wrapper_alias2")
