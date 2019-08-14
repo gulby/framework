@@ -261,6 +261,7 @@ class DictSubfield(ValueSubfield):
 
         instance.assert_changeable(self.field_name)
         cls, field_name, subfield_name = (instance.__class__, self.field_name, self.subfield_name)
+        patch = json_decode(patch, dict)
         assert self.check_schema(patch)
         d = getattr(instance, field_name)[subfield_name]
         assert id(d) != id(patch)
